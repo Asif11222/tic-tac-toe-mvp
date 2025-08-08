@@ -6,6 +6,7 @@ export interface TicTacToeViewProps {
   board: Board;
   currentPlayer: Player;
   status: GameStatus;
+  winningCells: [number, number][] | null;
   onCellClick: (row: number, col: number) => void;
   onReset: () => void;
 }
@@ -36,6 +37,7 @@ export const TicTacToeView: React.FC<TicTacToeViewProps> = ({
   board,
   currentPlayer,
   status,
+  winningCells,
   onCellClick,
   onReset,
 }) => {
@@ -85,6 +87,7 @@ export const TicTacToeView: React.FC<TicTacToeViewProps> = ({
           row.map((cell, cIdx) => {
             const label = cell ? `Cell ${rIdx + 1}-${cIdx + 1}: ${cell}` : `Cell ${rIdx + 1}-${cIdx + 1}: empty`;
             const disabled = cell !== null || status.type !== "ongoing";
+            const isWinning = status.type === 'win' && (winningCells?.some(([r, c]) => r === rIdx && c === cIdx) ?? false);
             return (
               <button
                 key={`${rIdx}-${cIdx}`}
@@ -93,7 +96,10 @@ export const TicTacToeView: React.FC<TicTacToeViewProps> = ({
                 aria-disabled={disabled}
                 disabled={disabled}
                 onClick={() => onCellClick(rIdx, cIdx)}
-                className="h-20 w-20 md:h-24 md:w-24 rounded-lg border bg-card text-2xl font-bold text-foreground hover:bg-accent hover:text-accent-foreground transition-transform focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-offset-background disabled:opacity-80 disabled:cursor-not-allowed flex items-center justify-center select-none"
+                className={
+                  `h-20 w-20 md:h-24 md:w-24 rounded-lg border text-2xl font-bold transition-transform focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-offset-background disabled:opacity-80 disabled:cursor-not-allowed flex items-center justify-center select-none ` +
+                  (isWinning ? 'bg-success text-success-foreground border-success hover:bg-success' : 'bg-card text-foreground hover:bg-accent hover:text-accent-foreground')
+                }
               >
                 {cell ?? ""}
               </button>

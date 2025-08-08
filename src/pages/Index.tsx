@@ -4,7 +4,7 @@ import TicTacToeView from "@/components/TicTacToeView";
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
-  const { board, currentPlayer, status, onCellClick, onReset } = useTicTacToePresenter();
+  const { board, currentPlayer, status, onCellClick, onReset, winningCells } = useTicTacToePresenter();
 
   // SEO
   useEffect(() => {
@@ -68,6 +68,7 @@ const Index = () => {
             board={board}
             currentPlayer={currentPlayer}
             status={status}
+            winningCells={winningCells}
             onCellClick={onCellClick}
             onReset={onReset}
           />

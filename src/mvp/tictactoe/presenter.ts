@@ -7,12 +7,14 @@ import {
   getStatus,
   makeMove,
   otherPlayer,
+  getWinningCells,
 } from "./model";
 
 export interface PresenterState {
   board: Board;
   currentPlayer: Player;
   status: GameStatus;
+  winningCells: [number, number][] | null;
 }
 
 export interface PresenterOutputs extends PresenterState {
@@ -25,6 +27,7 @@ export const useTicTacToePresenter = (): PresenterOutputs => {
   const [currentPlayer, setCurrentPlayer] = useState<Player>("X");
 
   const status = useMemo(() => getStatus(board, currentPlayer), [board, currentPlayer]);
+  const winningCells = useMemo(() => getWinningCells(board), [board]);
 
   const onCellClick = useCallback(
     (row: number, col: number) => {
@@ -46,6 +49,7 @@ export const useTicTacToePresenter = (): PresenterOutputs => {
     board,
     currentPlayer,
     status,
+    winningCells,
     onCellClick,
     onReset,
   };
