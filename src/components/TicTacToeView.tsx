@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import type { Board, Player, GameStatus } from "@/mvp/tictactoe/model";
 
@@ -39,6 +39,36 @@ export const TicTacToeView: React.FC<TicTacToeViewProps> = ({
   onCellClick,
   onReset,
 }) => {
+  useEffect(() => {
+    if (status.type !== 'win') return;
+    const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const gain = ctx.createGain();
+    gain.gain.value = 0.08;
+    gain.connect(ctx.destination);
+
+    const makeTone = (freq: number, start: number, duration: number) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      osc.connect(gain);
+      osc.start(ctx.currentTime + start);
+      osc.stop(ctx.currentTime + start + duration);
+    };
+
+    makeTone(523.25, 0, 0.15);
+    makeTone(659.25, 0.15, 0.15);
+    makeTone(783.99, 0.3, 0.25);
+    makeTone(1046.5, 0.55, 0.35);
+
+    const timeout = setTimeout(() => ctx.close(), 1200);
+    return () => {
+      clearTimeout(timeout);
+      ctx.close();
+    };
+  }, [status.type]);
+
   return (
     <article aria-label="Tic Tac Toe Game" className="w-full max-w-xl mx-auto">
       <div className="flex items-center justify-between mb-4">
